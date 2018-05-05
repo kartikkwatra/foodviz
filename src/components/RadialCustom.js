@@ -69,7 +69,6 @@ let regionColorScale = d3
 class RadialCustom extends Component {
   constructor(props) {
     super(props)
-    this.ArrivalData = [...this.props.mArrivals]
     this.partition_ring_group = [...this.props.partition_ring_group]
 
     this.partition = this.props.partition
@@ -78,7 +77,7 @@ class RadialCustom extends Component {
     this.extra_partitions = this.props.extra_partitions
     this.radius = this.props.bubble_circle_radius
 
-    //FIXME: What is this?
+    //FIXME: Assigning the encoding value 'ring' to this.food, so this.food is aware that it is encoded as ring. Using deconstructor syntax
     for (let [key, value] of Object.entries(this.props)) {
       if (value === 'Food') {
         this.food = key
@@ -105,7 +104,7 @@ class RadialCustom extends Component {
     this.renderBubbleChart()
 
     this.simulation = d3
-      .forceSimulation(this.mArrivals)
+      .forceSimulation(this.partition_ring_group)
       .force(
         'center',
         d3.forceCenter(this.props.width / 2, this.props.height / 2 - 55) // Vertival lift adjustment of the ring
@@ -141,9 +140,9 @@ class RadialCustom extends Component {
     //FIXME:
     //Removing this temporary filter for 10 values Not removing keyfilter, but only filtering of partition ring gp, since arrival data is also filtered.Later
     //UGLY: Filtering for data without any logic, just based on array index.
-    this.key_filter = []
-    this.partition_ring_group.forEach(d => this.key_filter.push(d[this.ring]))
-    this.key_filter = _.uniqBy(this.key_filter)
+    // this.key_filter = []
+    // this.partition_ring_group.forEach(d => this.key_filter.push(d[this.ring]))
+    // this.key_filter = _.uniqBy(this.key_filter)
     // this.partition_ring_group = this.partition_ring_group.filter(
     //   d => this.key_filter.indexOf(d[this.ring]) < 15
     // )
@@ -222,16 +221,16 @@ class RadialCustom extends Component {
 
     //Prepping the data
 
-    // Filtering arrival data
-    this.ArrivalData = this.ArrivalData.filter(
-      d => this.key_filter.indexOf(d.FoodEng) < 10
-    )
+    // // Filtering arrival data
+    // this.ArrivalData = this.ArrivalData.filter(
+    //   d => this.key_filter.indexOf(d.FoodEng) < 10
+    //
     //REVIEW: Can JS UTC formatted date be added right in the data? No month, no year
     //Adding Date
-    this.ArrivalData.forEach(d => {
-      let parser = d3.utcParse('%B/%Y')
-      d.date = parser(d.Month + '/' + d.Year)
-    })
+    // this.ArrivalData.forEach(d => {
+    //   let parser = d3.utcParse('%B/%Y')
+    //   d.date = parser(d.Month + '/' + d.Year)
+    // })
 
     //Angle calculations
     this.min_radius = this.props.min_radius
@@ -247,7 +246,7 @@ class RadialCustom extends Component {
 
     //REVIEW: For synching with ArcChart
     // Assigning FocusX and FocusY by grouping by month
-    this.mArrivals = _.chain(this.ArrivalData)
+    this.partition_ring_group = _.chain(this.partition_ring_group)
       .groupBy(d => d.date.getMonth())
       //.sortBy(d => d.date.getMonth())
       .map(Arrivals => {
@@ -286,6 +285,8 @@ class RadialCustom extends Component {
       })
       .flatten()
       .value()
+
+    // console.log(this.partition_ring_group)
 
     this.allStates_in_year = []
     //Creating Unique state list for each Food
@@ -351,6 +352,7 @@ class RadialCustom extends Component {
   }
 
   renderBubbleChart = () => {
+    //TODO: is this place alright to append the text glow defs ?
     //Prerequisites:
     var defs = this.container.append('defs')
     function rgbToCMYK(rgb) {
@@ -455,7 +457,7 @@ class RadialCustom extends Component {
       .append('g')
       .attr('class', 'bubble_group')
       .selectAll('circle')
-      .data(this.mArrivals)
+      .data(this.partition_ring_group)
 
     //exit
     this.circles.exit().remove()
@@ -464,13 +466,13 @@ class RadialCustom extends Component {
     this.circles = this.circles
       .enter()
       .append('circle')
-      .attr('class', d => 'class' + this.food_key.indexOf(d.FoodEng) + 'bubble')
+      .attr('class', d => 'class' + this.food_key.indexOf(d.Food) + 'bubble')
       .merge(this.circles)
       .attr('r', d => Math.sqrt(d.Arrival / this.props.bubbleRfactor))
       .attr('fill', (d, i) => {
-        return 'url(#pattern-total-' + this.food_key.indexOf(d.FoodEng) + ')'
+        return 'url(#pattern-total-' + this.food_key.indexOf(d.Food) + ')'
       }) //d => colorScale(this.food_key.indexOf(d.FoodEng) / 10))
-      .attr('stroke', d => colors[this.food_key.indexOf(d.FoodEng)])
+      .attr('stroke', d => colors[this.food_key.indexOf(d.Food)])
       .attr('stroke-width', 3)
       .attr('stroke-opacity', 0.7)
       .attr('fill-opacity', 0.6)
@@ -831,7 +833,7 @@ class RadialCustom extends Component {
           .select('g.bubble_group')
           .selectAll('circle')
           .each((dx, ix, jx) => {
-            if (dx.FoodEng === d) {
+            if (dx.Food === d) {
               d3
                 .select(jx[ix])
                 .transition()
@@ -1092,7 +1094,7 @@ class RadialCustom extends Component {
             if (d in { 5: 0, 4: 0, 8: 0, 7: 0 }) return 'end'
             else return 'start'
           })
-          .attr('fill', () => colors[this.food_key.indexOf(dx.FoodEng)])
+          .attr('fill', () => colors[this.food_key.indexOf(dx.Food)])
           .attr('stroke', 'black') //() => colors[this.food_key.indexOf(dx.FoodEng)])
           .attr('stroke-width', 0.25)
           .transition()
