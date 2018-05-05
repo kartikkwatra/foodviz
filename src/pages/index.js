@@ -34,8 +34,8 @@ class IndexPage extends Component {
     // console.log(totaldata)
     // console.log(month_food_group)
 
-    this.top10 = totaldata.filter(d => d.vizcode === 'top10')
-    console.log(this.top10)
+    this.top10Group = totaldata.filter(d => d.vizcode === 'top10')
+    console.log(this.top10Group)
   }
 
   render() {
@@ -122,7 +122,7 @@ class IndexPage extends Component {
               // Mini India Map on top right to help decode Location
               //Data
               mArrivals={mArrivals}
-              partition_ring_group={this.top10}
+              partition_ring_group={this.top10Group}
               //Encodings
               ring="Food"
               partition="Month"

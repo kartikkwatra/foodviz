@@ -78,13 +78,14 @@ class RadialCustom extends Component {
     this.extra_partitions = this.props.extra_partitions
     this.radius = this.props.bubble_circle_radius
 
-    //TODO: What is this?
+    //FIXME: What is this?
     for (let [key, value] of Object.entries(this.props)) {
       if (value === 'Food') {
         this.food = key
       }
     }
 
+    //Random function for positioning of bubbles
     this.seed = 10
     this.random = () => {
       let x = Math.sin(this.seed++) * 10000
@@ -137,16 +138,17 @@ class RadialCustom extends Component {
     //FIXME: Proper Filtering data flow. Ring filter-er
     //FIXME: Arrival Data not filtered based on rings!
 
+    //FIXME:
+    //Removing this temporary filter for 10 values Not removing keyfilter, but only filtering of partition ring gp, since arrival data is also filtered.Later
     //UGLY: Filtering for data without any logic, just based on array index.
     this.key_filter = []
     this.partition_ring_group.forEach(d => this.key_filter.push(d[this.ring]))
     this.key_filter = _.uniqBy(this.key_filter)
-
-    //Removing this temporary filter for 10 values
     // this.partition_ring_group = this.partition_ring_group.filter(
     //   d => this.key_filter.indexOf(d[this.ring]) < 15
     // )
 
+    //Perfect
     // STATE KEYS for color ATM
     this.stateRegionKeys = {
       'Himachal Pradesh': 'North India',
@@ -189,7 +191,7 @@ class RadialCustom extends Component {
 
     // Generating arc,ring,partition key, max_arc
     this.partition_ring_group.forEach(d => {
-      let parser = d3.utcParse('%B/%Y')
+      let parser = d3.utcParse('%m/%Y')
       if (this.arc !== 'Month') d.date = parser(d.Month + '/' + d.Year)
 
       arc_count.push(d[this.arc].length)
@@ -294,7 +296,7 @@ class RadialCustom extends Component {
 
       let tempArray = []
       x.forEach(d => {
-        tempArray = tempArray.concat(d.Location)
+        tempArray = tempArray.concat(d.Locationlist)
       })
       this.allStates_in_year.push(_.uniq(tempArray))
     }
