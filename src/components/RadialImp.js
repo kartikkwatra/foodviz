@@ -211,9 +211,11 @@ class RadialCustom extends Component {
         this.arc_key.push(d)
       })
 
+      //FIXME: should this be sortby or uniq ?
       d[this.arc] = _.sortBy(d[this.arc])
 
-      d[this.arc] = _.sortBy(d[this.arc], d => this.stateRegionKeys[d])
+      // Sort here Instead by Country/Continent or whatever
+      //   d[this.arc] = _.sortBy(d[this.arc], d => this.stateRegionKeys[d])
     })
 
     this.arc_key = _.uniqBy(this.arc_key)
@@ -291,9 +293,7 @@ class RadialCustom extends Component {
       .flatten()
       .value()
 
-    // console.log(this.partition_ring_group)
-
-    this.allStates_in_year = []
+    this.allCountries_in_year = []
     //Creating Unique state list for each Food
     for (let index in this.food_key) {
       let x = this.partition_ring_group.filter(
@@ -302,12 +302,12 @@ class RadialCustom extends Component {
 
       let tempArray = []
       x.forEach(d => {
-        tempArray = tempArray.concat(d.Locationlist)
+        tempArray = tempArray.concat(d[this.arc])
       })
-      this.allStates_in_year.push(_.uniq(tempArray))
+      this.allCountries_in_year.push(_.uniq(tempArray))
     }
 
-    // console.log(this.allStates_in_year)
+    console.log(this.allCountries_in_year)
 
     // DEPRECATED FOOD KEY: GIVES CONTROL OF ORDER OF FOOD
     // Creating Dictionary keys
@@ -928,7 +928,7 @@ class RadialCustom extends Component {
 
         centralAnnotationContainer
           .selectAll('rect.centralAnnotation')
-          .data(this.allStates_in_year[i])
+          .data(this.allCountries_in_year[i])
           .enter()
           .append('rect')
           // .attr("class", "centralAnnotation")
@@ -941,19 +941,20 @@ class RadialCustom extends Component {
               ')'
             )
           })
-          .attr('x', dx => -dx.length / (3.15 * 2) + 'em')
+          .attr('x', dx => -dx.length / (2.5 * 2) + 'em')
           .attr('y', -10)
-          .attr('width', dx => dx.length / 3.15 + 'em') //FIXME: set issue:
+          .attr('width', dx => dx.length / 2.5 + 'em') //FIXME: set issue:
           .attr('height', '0.62em')
           .attr('fill', dx => regionColorScale(this.stateRegionKeys[dx]))
           .attr('fill-opacity', 0.75)
 
         centralAnnotationContainer
           .selectAll('text.centralAnnotation')
-          .data(this.allStates_in_year[i])
+          .data(this.allCountries_in_year[i])
           .enter()
           .append('text')
           .attr('pointer-events', 'none')
+          //FIXME: Change the fill scale
           .attr('fill', dx => {
             if (this.stateRegionKeys[dx] === 'East India') return '#2C8ACC'
             else if (this.stateRegionKeys[dx] === 'Central India')
@@ -1086,6 +1087,7 @@ class RadialCustom extends Component {
         d => 'white' // colorScale(this.arc_key.indexOf(d) / this.arc_key.length)
       )
       .attr('stroke-width', this.arc_height / 25)
+      //FIXME: Tooltip
       .on('mouseover', (d, i, j) => {
         d3.event.stopPropagation()
 
@@ -1158,8 +1160,8 @@ class RadialCustom extends Component {
           )
           .text(d => {
             if (dx.Arrival / 1000 < 1) {
-              return dx.Arrival.toFixed(0) + ' Tonne'
-            } else return Math.round(dx.Arrival / 1000) + 'k Tonne'
+              return dx.Arrival.toFixed(0) + ' Kg'
+            } else return Math.round(dx.Arrival / 1000) + ' Tonne'
           })
       })
   }

@@ -3,6 +3,7 @@ import mArrivals from '../Data/monthly_arrivals.json'
 import month_food_group from '../Data/month_food_grouping.json'
 import totaldata from '../Data/totaldata.json'
 import RadialCustom from '../components/RadialCustom'
+import RadialImp from '../components/RadialImp'
 import styled from 'react-emotion'
 // import { log } from 'util'
 import Img from 'gatsby-image'
@@ -34,8 +35,10 @@ class IndexPage extends Component {
     // console.log(totaldata)
     // console.log(month_food_group)
 
-    this.top10Group = totaldata.filter(d => d.vizcode === 'top10')
-    console.log(this.top10Group)
+    this.top10 = totaldata.filter(d => d.vizcode === 'top10')
+    this.nexttop10 = totaldata.filter(d => d.vizcode === 'nexttop10')
+    this.bottom10 = totaldata.filter(d => d.vizcode === 'bottom10')
+    this.imptop10 = totaldata.filter(d => d.vizcode === 'imptop10')
   }
 
   render() {
@@ -116,13 +119,12 @@ class IndexPage extends Component {
           <h2>Top 10 Fruits of the year, by domestic arrivals</h2>
         </TextWrapper>
         <RadialWrapperWide>
-          <div style={{ marginTop: '-2rem' }}>
+          <div style={{ marginTop: '-1rem' }}>
             <RadialCustom
               // Here you can give some logical grouping to arc i.e States to support decoding by reducing colors
               // Mini India Map on top right to help decode Location
               //Data
-              mArrivals={mArrivals}
-              partition_ring_group={this.top10Group}
+              partition_ring_group={this.top10}
               //Encodings
               ring="Food"
               partition="Month"
@@ -137,11 +139,13 @@ class IndexPage extends Component {
               bubbleRfactor={120}
               // extra_partitions={1} //Can't be zero now TODO: Remove from props
               bg_ring_gap={0.7}
-              containerId="cmp1"
+              bubbleArcGap={70}
+              lift={55}
+              containerId="top10"
             />
           </div>
 
-          <div style={{ maxWidth: 500, marginTop: '2rem', fontSize: 16 }}>
+          <div style={{ maxWidth: 400, marginTop: '2rem', fontSize: 16 }}>
             <h4>Facts you might not know</h4>
             <p>
               - Apple trumps all F&V by being the largest arrival of the year in
@@ -162,6 +166,130 @@ class IndexPage extends Component {
               <br /> A typical day example
               <br /> Railway - Dropping the idea
             </p>
+          </div>
+        </RadialWrapperWide>
+        <RadialWrapperWide>
+          <div style={{ marginTop: '-1rem' }}>
+            <RadialCustom
+              // Here you can give some logical grouping to arc i.e States to support decoding by reducing colors
+              // Mini India Map on top right to help decode Location
+              //Data
+              partition_ring_group={this.nexttop10}
+              //Encodings
+              ring="Food"
+              partition="Month"
+              arc="Locationlist"
+              alignment="No"
+              //Design
+              width={690}
+              height={750}
+              bubble_circle_radius={290} //Governs the size of the whole radial proportionally
+              min_radius={120}
+              arc_height={7}
+              bubbleRfactor={20}
+              // extra_partitions={1} //Can't be zero now TODO: Remove from props
+              bg_ring_gap={0.7}
+              bubbleArcGap={70}
+              lift={35}
+              containerId="nexttop10"
+            />
+          </div>
+
+          <div style={{ maxWidth: 400, marginTop: '2rem', fontSize: 16 }}>
+            <h4>Facts you might not know</h4>
+            <p>
+              - Apple trumps all F&V by being the largest arrival of the year in
+              both domestic and international arrivals. A massive 4.7 lakh
+              tonnes of Apples came to the Mandi in domestic arrivals in the
+              year 2016-17, which is 1 lakh tonnes more than Potato, the second
+              heighest domestic arrival in combined F&V category, and 3 lakh
+              tonnes more than Mango, the second heighest domestic arrival in
+              Fruits category. All of apple comes from North India except for
+              two months where it also arives from MP(Central India).
+              <br />
+              How many % of fruits come from specific region
+              <br />
+              Mango is by far the most grographically diverse fruit in domestic
+              arrivals.
+              <br />
+              Most and least diverse food crops in terms of arrivals
+              <br /> A typical day example
+              <br /> Railway - Dropping the idea
+            </p>
+          </div>
+        </RadialWrapperWide>
+        <RadialWrapperWide>
+          <RadialCustom
+            // Here you can give some logical grouping to arc i.e States to support decoding by reducing colors
+            // Mini India Map on top right to help decode Location
+            //Data
+            partition_ring_group={this.bottom10}
+            //Encodings
+            ring="Food"
+            partition="Month"
+            arc="Locationlist"
+            alignment="No"
+            //Design
+            width={690}
+            height={580}
+            bubble_circle_radius={290} //Governs the size of the whole radial proportionally
+            min_radius={120}
+            arc_height={7}
+            bubbleRfactor={0.5}
+            // extra_partitions={1} //Can't be zero now TODO: Remove from props
+            bg_ring_gap={0.7}
+            bubbleArcGap={70}
+            lift={35}
+            containerId="bottom10"
+          />
+          <div style={{ maxWidth: 400, marginTop: '2rem', fontSize: 16 }}>
+            <h4>Facts you might not know</h4>
+            <p>
+              - Apple trumps all F&V by being the largest arrival of the year in
+              both domestic and international arrivals. A massive 4.7 lakh
+              tonnes of Apples came to the Mandi in domestic arrivals in the
+              year 2016-17, which is 1 lakh tonnes more than Potato, the second
+              heighest domestic arrival in combined F&V category, and 3 lakh
+              tonnes more than Mango, the second heighest domestic arrival in
+              Fruits category. All of apple comes from North India except for
+              two months where it also arives from MP(Central India).
+              <br />
+              How many % of fruits come from specific region
+              <br />
+              Mango is by far the most grographically diverse fruit in domestic
+              arrivals.
+              <br />
+              Most and least diverse food crops in terms of arrivals
+              <br /> A typical day example
+              <br /> Railway - Dropping the idea
+            </p>
+          </div>
+        </RadialWrapperWide>
+        <RadialWrapperWide>
+          <div style={{ marginTop: '-1rem' }}>
+            <RadialImp
+              // Here you can give some logical grouping to arc i.e States to support decoding by reducing colors
+              // Mini India Map on top right to help decode Location
+              //Data
+              partition_ring_group={this.imptop10}
+              //Encodings
+              ring="Food"
+              partition="Month"
+              arc="Countrylist"
+              alignment="No"
+              //Design
+              width={710}
+              height={750}
+              bubble_circle_radius={290} //Governs the size of the whole radial proportionally
+              min_radius={120}
+              arc_height={7}
+              bubbleRfactor={1900}
+              // extra_partitions={1} //Can't be zero now TODO: Remove from props
+              bg_ring_gap={0.7}
+              bubbleArcGap={70}
+              lift={40}
+              containerId="imptop10"
+            />
           </div>
         </RadialWrapperWide>
 
