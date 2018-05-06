@@ -220,6 +220,17 @@ class RadialCustom extends Component {
 
     this.arc_key = _.uniqBy(this.arc_key)
     this.ring_key = _.uniqBy(this.ring_key)
+
+    //Sorting the ring_key by yArrival
+    this.ring_key = _.orderBy(
+      this.ring_key,
+      food => {
+        let x = this.partition_ring_group.filter(d => d.Food === food)
+        return x[0].yArrival
+      },
+      'desc'
+    )
+
     if (this.partition !== 'Month')
       this.partition_key = _.uniqBy(this.partition_key)
 
@@ -993,7 +1004,7 @@ class RadialCustom extends Component {
               (this.props.height / 2 - 20) +
               ')'
           )
-          .text('States')
+          .text('Countries')
 
         centralAnnotationContainer
           .selectAll('rect.centralAnnotation')
@@ -1191,6 +1202,8 @@ class RadialCustom extends Component {
       // .style('stroke-opacity', 1)
       .style('stroke-dasharray', 8)
       .style('stroke-width', 2)
+      .transition()
+      .duration(250)
       .style('stroke', 'grey')
   }
 

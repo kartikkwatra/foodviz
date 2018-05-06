@@ -191,6 +191,15 @@ class RadialCustom extends Component {
     this.ring_key = []
     this.partition_key = []
 
+    this.regionOrder = [
+      'North India',
+      'Central India',
+      'West India',
+      'South India',
+      'East India',
+      'Northeast India',
+    ]
+
     // Generating arc,ring,partition key, max_arc
     this.partition_ring_group.forEach(d => {
       let parser = d3.utcParse('%m/%Y')
@@ -213,11 +222,26 @@ class RadialCustom extends Component {
 
       d[this.arc] = _.sortBy(d[this.arc])
 
-      d[this.arc] = _.sortBy(d[this.arc], d => this.stateRegionKeys[d])
+      //TODO: Copy in ImpRadial
+
+      d[this.arc] = _.sortBy(d[this.arc], d =>
+        this.regionOrder.indexOf(this.stateRegionKeys[d])
+      )
     })
 
     this.arc_key = _.uniqBy(this.arc_key)
     this.ring_key = _.uniqBy(this.ring_key)
+
+    //Sorting the ring_key by yArrival
+    this.ring_key = _.orderBy(
+      this.ring_key,
+      food => {
+        let x = this.partition_ring_group.filter(d => d.Food === food)
+        return x[0].yArrival
+      },
+      'desc'
+    )
+
     if (this.partition !== 'Month')
       this.partition_key = _.uniqBy(this.partition_key)
 
@@ -306,6 +330,12 @@ class RadialCustom extends Component {
       })
       this.allStates_in_year.push(_.uniq(tempArray))
     }
+
+    this.allStates_in_year.forEach((loclist, i) => {
+      this.allStates_in_year[i] = _.sortBy(loclist, loc =>
+        this.regionOrder.indexOf(this.stateRegionKeys[loc])
+      )
+    })
 
     // console.log(this.allStates_in_year)
 
@@ -478,9 +508,9 @@ class RadialCustom extends Component {
         return 'url(#pattern-total-' + this.food_key.indexOf(d.Food) + ')'
       }) //d => colorScale(this.food_key.indexOf(d.FoodEng) / 10))
       .attr('stroke', d => colors[this.food_key.indexOf(d.Food)])
-      .attr('stroke-width', 3)
-      .attr('stroke-opacity', 0.7)
-      .attr('fill-opacity', 0.6)
+      .attr('stroke-width', 2.5)
+      .attr('stroke-opacity', 0.6)
+      .attr('fill-opacity', 0.5)
   }
 
   renderArcChart = () => {
@@ -1181,6 +1211,8 @@ class RadialCustom extends Component {
   dashed_bubble_annotation = d => {
     this.dashedBubbleContainer
       .append('circle')
+      // .transition()
+      // .duration(150)
       .attr('cx', d.x)
       .attr('cy', d.y)
       .attr('r', 20)
@@ -1188,6 +1220,8 @@ class RadialCustom extends Component {
       // .style('stroke-opacity', 1)
       .style('stroke-dasharray', 8)
       .style('stroke-width', 2)
+      .transition()
+      .duration(150)
       .style('stroke', 'grey')
   }
 

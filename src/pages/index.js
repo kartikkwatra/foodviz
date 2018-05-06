@@ -233,7 +233,7 @@ class IndexPage extends Component {
             alignment="No"
             //Design
             width={690}
-            height={630}
+            height={670}
             bubble_circle_radius={290} //Governs the size of the whole radial proportionally
             min_radius={120}
             arc_height={7}
@@ -245,28 +245,6 @@ class IndexPage extends Component {
             pull={-10}
             containerId="bottom10"
           />
-          <div style={{ maxWidth: 400, marginTop: '2rem', fontSize: 16 }}>
-            <h4>Facts you might not know</h4>
-            <p>
-              - Apple trumps all F&V by being the largest arrival of the year in
-              both domestic and international arrivals. A massive 4.7 lakh
-              tonnes of Apples came to the Mandi in domestic arrivals in the
-              year 2016-17, which is 1 lakh tonnes more than Potato, the second
-              heighest domestic arrival in combined F&V category, and 3 lakh
-              tonnes more than Mango, the second heighest domestic arrival in
-              Fruits category. All of apple comes from North India except for
-              two months where it also arives from MP(Central India).
-              <br />
-              How many % of fruits come from specific region
-              <br />
-              Mango is by far the most grographically diverse fruit in domestic
-              arrivals.
-              <br />
-              Most and least diverse food crops in terms of arrivals
-              <br /> A typical day example
-              <br /> Railway - Dropping the idea
-            </p>
-          </div>
         </RadialWrapperWide>
         <RadialWrapperWide>
           <div style={{ marginTop: '-1rem' }}>
