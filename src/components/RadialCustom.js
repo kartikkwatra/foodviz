@@ -108,7 +108,7 @@ class RadialCustom extends Component {
       .force(
         'center',
         d3.forceCenter(
-          this.props.width / 2,
+          this.props.width / 2 - this.props.pull,
           this.props.height / 2 - this.props.lift
         ) // Vertival lift adjustment of the ring
       )
@@ -478,7 +478,7 @@ class RadialCustom extends Component {
         return 'url(#pattern-total-' + this.food_key.indexOf(d.Food) + ')'
       }) //d => colorScale(this.food_key.indexOf(d.FoodEng) / 10))
       .attr('stroke', d => colors[this.food_key.indexOf(d.Food)])
-      .attr('stroke-width', 2)
+      .attr('stroke-width', 3)
       .attr('stroke-opacity', 0.7)
       .attr('fill-opacity', 0.6)
   }
@@ -610,6 +610,46 @@ class RadialCustom extends Component {
         return end_angle
       })
 
+    let bg_ringHoverGen = d3
+      .arc()
+      .outerRadius((d, i, j) => {
+        // let sector_no = j[0].parentNode.__data__ ;
+        return ringScale(i) //+ this.props.bg_ring_gap
+      })
+      .innerRadius((d, i, j) => {
+        // let ring = j[0].parentNode.__data__[this.ring];
+        return ringScale(i) - this.arc_height - this.props.bg_ring_gap - 2.5 //FIXME: Does ringscale have any effect on the order of food names?
+      })
+      .startAngle((d, i, j) => {
+        let partition_no = j[0].parentNode.__data__
+        let s_angle =
+          -this.partition_degree / 2 +
+          this.partition_degree * partition_no +
+          this.rotation_degree
+
+        if (partition_no >= 7) {
+          s_angle += this.annotation_partition_degree - this.partition_degree
+        }
+
+        return this.sep_degree + s_angle
+      })
+      .endAngle((d, i, j) => {
+        let partition_no = j[0].parentNode.__data__
+        let s_angle =
+          -this.partition_degree / 2 +
+          this.partition_degree * partition_no +
+          this.rotation_degree
+        // pehle end angle shift hoga, fir start angle shift hoga (7 onwards), you are drwaing with one pen,one hand at a time, not two lines simultaneously.
+        let end_angle = s_angle + this.partition_degree //Partition no 6 is annotation_partition
+        if (partition_no === 6) {
+          end_angle = s_angle + this.annotation_partition_degree
+        } else if (partition_no > 6) {
+          end_angle += this.annotation_partition_degree - this.partition_degree
+        }
+
+        return end_angle
+      })
+
     let arcManipulator = (selection, reverseFlag = 1) => {
       // Docstring:
       // Arg: D3 Selection of path element to be manipulated
@@ -667,7 +707,7 @@ class RadialCustom extends Component {
       .data(this.ring_key)
       .enter()
       .append('path')
-      .attr('class', 'visible_bg_Arcs')
+      .attr('class', 'visible_bg_Arc')
       .attr('id', (d, i, j) => {
         let partition_no = j[0].parentNode.__data__
         return 'partition' + partition_no + 'ring' + i
@@ -766,7 +806,7 @@ class RadialCustom extends Component {
     //Appending hidden arcs for Annot Partition (partition 6)
     this.container
       .select('g#partition6') //TODO: Change 6 incase you change orientation
-      .selectAll('path.visible_bg_Arcs')
+      .selectAll('path.visible_bg_Arc')
       .attr('fill-opacity', 0.3)
       .attr('fill', (d, i) => 'url(#pattern-total-' + i + ')')
       // .attr('stroke-width', 1)
@@ -792,6 +832,26 @@ class RadialCustom extends Component {
           .attr('d', newArc)
           .attr('fill', 'none')
       })
+
+    //Appending the hover partition
+    this.container
+      .select('g#partition6') //TODO: Change 6 incase you change orientation
+      .selectAll('path.hover_bg_Arc')
+      .data(this.ring_key)
+      .enter()
+      .append('path')
+      .attr('class', 'hover_bg_Arc')
+      .attr('id', (d, i, j) => {
+        let partition_no = j[0].parentNode.__data__
+        return 'hoverArcpartition' + partition_no + 'ring' + i
+      })
+      .attr(
+        'transform',
+        'translate(' + this.props.width / 2 + ',' + this.props.height / 2 + ')'
+      )
+      .attr('d', bg_ringHoverGen)
+      .attr('fill', 'white')
+      .attr('fill-opacity', 0.0001)
       .on('mouseover', (d, i, j) => {
         //Listen to mouseover on Annot Partition bg_rings //TODO: Organise
         d3.event.stopPropagation()
@@ -820,7 +880,7 @@ class RadialCustom extends Component {
 
         this.container //Highlighting the Annot Partition Ring being hovered
           .select('g#partition6') //TODO: Change 6 incase you change orientation
-          .selectAll('path.visible_bg_Arcs')
+          .selectAll('path.visible_bg_Arc')
           // .transition()
           // .duration(150)
           .attr('fill', (dy, iy) => {
@@ -832,6 +892,11 @@ class RadialCustom extends Component {
           .attr('stroke-opacity', (dy, iy, jy) => {
             return iy === i ? 0.5 : 0
           })
+
+        // Creating the dhashed bubble container here:
+        this.dashedBubbleContainer = this.container
+          .append('g')
+          .attr('class', 'dashedBubbleAnnotation')
 
         //Highlighting the bubbles
         this.container
@@ -847,6 +912,9 @@ class RadialCustom extends Component {
                 .attr('stroke-opacity', 1)
 
               this.create_Radial_Gutter_Annotations(dx)
+
+              if (Math.sqrt(dx.Arrival / this.props.bubbleRfactor) <= 5)
+                this.dashed_bubble_annotation(dx)
             } else {
               d3
                 .select(jx[ix])
@@ -981,6 +1049,9 @@ class RadialCustom extends Component {
         //Clearing arrivalQtyText annotations  //FIXME: Wrong. Should be in mouseout: All reverts to prev stage
         d3.selectAll('text.arrivalQtyText').remove()
 
+        // Removing dashedBubbleAnnotation
+        this.container.select('g.dashedBubbleAnnotation').remove()
+
         //highlighting the minor arcs
         this.container
           .selectAll('path.minor_arcs')
@@ -992,7 +1063,7 @@ class RadialCustom extends Component {
 
         this.container //Highlighting the Annot Partition Ring being hovered
           .select('g#partition6') //TODO: Change 6 incase you change orientation
-          .selectAll('path.visible_bg_Arcs')
+          .selectAll('path.visible_bg_Arc')
           // .transition()
           // .duration(150)
           // .attr('fill', (dy, iy) => {
@@ -1107,6 +1178,19 @@ class RadialCustom extends Component {
       })
   }
 
+  dashed_bubble_annotation = d => {
+    this.dashedBubbleContainer
+      .append('circle')
+      .attr('cx', d.x)
+      .attr('cy', d.y)
+      .attr('r', 20)
+      .style('fill', 'none')
+      // .style('stroke-opacity', 1)
+      .style('stroke-dasharray', 8)
+      .style('stroke-width', 2)
+      .style('stroke', 'grey')
+  }
+
   create_Radial_Gutter_Annotations = dx => {
     //Adding Arrival Qty Text
     // Have to jump the partition 6 here in selector itself
@@ -1158,7 +1242,8 @@ class RadialCustom extends Component {
           )
           .text(d => {
             if (dx.Arrival / 1000 < 1) {
-              return dx.Arrival.toFixed(0) + ' Tonne'
+              if (dx.Arrival < 1) return dx.Arrival.toFixed(2) + ' Tonne'
+              else return dx.Arrival.toFixed(0) + ' Tonne'
             } else return Math.round(dx.Arrival / 1000) + 'k Tonne'
           })
       })

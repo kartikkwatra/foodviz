@@ -141,6 +141,7 @@ class IndexPage extends Component {
               bg_ring_gap={0.7}
               bubbleArcGap={70}
               lift={55}
+              pull={0}
               containerId="top10"
             />
           </div>
@@ -191,6 +192,7 @@ class IndexPage extends Component {
               bg_ring_gap={0.7}
               bubbleArcGap={70}
               lift={35}
+              pull={0}
               containerId="nexttop10"
             />
           </div>
@@ -231,7 +233,7 @@ class IndexPage extends Component {
             alignment="No"
             //Design
             width={690}
-            height={580}
+            height={630}
             bubble_circle_radius={290} //Governs the size of the whole radial proportionally
             min_radius={120}
             arc_height={7}
@@ -239,7 +241,8 @@ class IndexPage extends Component {
             // extra_partitions={1} //Can't be zero now TODO: Remove from props
             bg_ring_gap={0.7}
             bubbleArcGap={70}
-            lift={35}
+            lift={59}
+            pull={-10}
             containerId="bottom10"
           />
           <div style={{ maxWidth: 400, marginTop: '2rem', fontSize: 16 }}>
@@ -283,11 +286,12 @@ class IndexPage extends Component {
               bubble_circle_radius={290} //Governs the size of the whole radial proportionally
               min_radius={120}
               arc_height={7}
-              bubbleRfactor={1900}
+              bubbleRfactor={2000}
               // extra_partitions={1} //Can't be zero now TODO: Remove from props
               bg_ring_gap={0.7}
               bubbleArcGap={70}
               lift={40}
+              pull={15}
               containerId="imptop10"
             />
           </div>
