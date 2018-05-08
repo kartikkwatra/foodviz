@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import * as d3 from 'd3'
 // import * as dAnn from "d3-svg-annotation";
 import _ from 'lodash'
-import chroma from 'chroma-js'
+// import chroma from 'chroma-js'
+import ReactTooltip from 'react-tooltip'
 
 // const width = 900;
 // const height = 900;
@@ -13,33 +14,7 @@ const margin = { left: 10, top: 10, right: 10, bottom: 10 }
 //   return Math.abs(x/(70-x));
 // }
 
-//d3 functions
-let colorScale = chroma.scale([
-  '#53cf8d',
-  '#9900cc',
-  '#009688',
-  '#2196F3',
-  '#eb8787',
-])
-
-colorScale.colors(10)
-
-let colors2 = ['#2A88B2', '#FF5CBB', '#46FF98', '#9526C9', '#009688', '#C75E52']
-
-let colors3 = ['#2C8ACC', '#D41FA9', '#24ED3F', '#FF782E', '#009688', '#E0DD20']
-
-let colorsx = [
-  '#eb8787',
-  '#53cf8d',
-  '#9C27B0',
-  '#558B2F',
-  '#009688',
-  '#2196F3',
-  '#FF1744',
-  '#aad28c',
-  '#795548',
-  '#FF9800',
-]
+// let colors2 = ['#2A88B2', '#FF5CBB', '#46FF98', '#9526C9', '#009688', '#C75E52']
 
 let colors = [
   '#66C5CC',
@@ -53,6 +28,8 @@ let colors = [
   '#B497E7',
   '#D3B484',
 ]
+
+let colors3 = ['#2C8ACC', '#D41FA9', '#24ED3F', '#FF782E', '#009688', '#E0DD20']
 
 let regionColorScale = d3
   .scaleOrdinal()
@@ -221,8 +198,6 @@ class RadialCustom extends Component {
       })
 
       d[this.arc] = _.sortBy(d[this.arc])
-
-      //TODO: Copy in ImpRadial
 
       d[this.arc] = _.sortBy(d[this.arc], d =>
         this.regionOrder.indexOf(this.stateRegionKeys[d])
@@ -798,7 +773,7 @@ class RadialCustom extends Component {
       .attr('class', 'partition_annotations')
       .attr('dy', d => {
         // Code for adjusting the dy for the reversed arcs (partition 5 & 7)
-        if (d in { 5: 0, 4: 0, 8: 0, 7: 0 }) return this.arc_height + 5
+        if (d in { 5: 0, 4: 0, 8: 0, 7: 0 }) return this.arc_height + 7
         else return -5
       })
       .each((d, i, j) => {
@@ -950,8 +925,8 @@ class RadialCustom extends Component {
                 .select(jx[ix])
                 .transition()
                 .duration(100)
-                .attr('fill-opacity', 0.07)
-                .attr('stroke-opacity', 0.1)
+                .attr('fill-opacity', 0.075)
+                .attr('stroke-opacity', 0.12)
             }
           })
 
@@ -1039,9 +1014,9 @@ class RadialCustom extends Component {
               ')'
             )
           })
-          .attr('x', dx => -dx.length / (3.15 * 2) + 'em')
+          .attr('x', dx => -dx.length / (2.5 * 2) + 'em')
           .attr('y', -10)
-          .attr('width', dx => dx.length / 3.15 + 'em') //FIXME: set issue:
+          .attr('width', dx => dx.length / 2.5 + 'em') //FIXME: set issue:
           .attr('height', '0.62em')
           .attr('fill', dx => regionColorScale(this.stateRegionKeys[dx]))
           .attr('fill-opacity', 0.75)
@@ -1144,7 +1119,7 @@ class RadialCustom extends Component {
       })
       .text(d => d)
 
-    //REVIEW: Why attach tooltip to <body> ?
+    //FIXME: Why attach tooltip to <body> ?
     let div = d3
       .select('body')
       .append('div')
@@ -1187,24 +1162,8 @@ class RadialCustom extends Component {
         d => 'white' // colorScale(this.arc_key.indexOf(d) / this.arc_key.length)
       )
       .attr('stroke-width', this.arc_height / 25)
-      .on('mouseover', (d, i, j) => {
-        d3.event.stopPropagation()
-
-        div
-          .transition()
-          .duration(200)
-          .attr('opacity', 0.9)
-
-        div
-          .html(
-            d +
-              ' ' +
-              j[0].parentNode.__data__[this.ring] +
-              ' ' +
-              this.stateRegionKeys[d]
-          )
-          .attr('left', d3.event.pageX + 'px')
-          .attr('top', d3.event.pageY - 10 + 'px')
+      .attr('data-tip', (d, i, j) => {
+        return j[0].parentNode.__data__[this.ring] + '<br>' + d
       })
   }
 
@@ -1289,11 +1248,20 @@ class RadialCustom extends Component {
 
   render() {
     return (
-      <svg
-        width={this.props.width}
-        height={this.props.height}
-        ref={this.props.containerId}
-      />
+      <div>
+        <ReactTooltip
+          place="top"
+          border={false}
+          html={true}
+          effect="solid"
+          type="info"
+        />
+        <svg
+          width={this.props.width}
+          height={this.props.height}
+          ref={this.props.containerId}
+        />
+      </div>
     )
   }
 }

@@ -3,6 +3,7 @@ import * as d3 from 'd3'
 // import * as dAnn from "d3-svg-annotation";
 import _ from 'lodash'
 import chroma from 'chroma-js'
+// import ReactTooltip from 'react-tooltip'
 
 // const width = 900;
 // const height = 900;
@@ -14,32 +15,23 @@ const margin = { left: 10, top: 10, right: 10, bottom: 10 }
 // }
 
 //d3 functions
-let colorScale = chroma.scale([
-  '#53cf8d',
-  '#9900cc',
-  '#009688',
-  '#2196F3',
-  '#eb8787',
-])
 
-colorScale.colors(10)
-
-let colors2 = ['#2A88B2', '#FF5CBB', '#46FF98', '#9526C9', '#009688', '#C75E52']
+// let colors2 = ['#2A88B2', '#FF5CBB', '#46FF98', '#9526C9', '#009688', '#C75E52']
 
 let colors3 = ['#2C8ACC', '#D41FA9', '#24ED3F', '#FF782E', '#009688', '#E0DD20']
 
-let colorsx = [
-  '#eb8787',
-  '#53cf8d',
-  '#9C27B0',
-  '#558B2F',
-  '#009688',
-  '#2196F3',
-  '#FF1744',
-  '#aad28c',
-  '#795548',
-  '#FF9800',
-]
+// let colorsx = [
+//   '#eb8787',
+//   '#53cf8d',
+//   '#9C27B0',
+//   '#558B2F',
+//   '#009688',
+//   '#2196F3',
+//   '#FF1744',
+//   '#aad28c',
+//   '#795548',
+//   '#FF9800',
+// ]
 
 let colors = [
   '#66C5CC',
@@ -57,12 +49,12 @@ let colors = [
 let regionColorScale = d3
   .scaleOrdinal()
   .domain([
-    'North India',
-    'South India',
-    'Central India',
-    'West India',
-    'Northeast India',
-    'East India',
+    'ASIA',
+    'NORTH AMERICA',
+    'EUROPE',
+    'AFRICA',
+    'SOUTH AMERICA',
+    'OCEANIA',
   ])
   .range(colors3)
 
@@ -153,35 +145,23 @@ class RadialCustom extends Component {
     //Perfect
     // STATE KEYS for color ATM
     this.stateRegionKeys = {
-      'Himachal Pradesh': 'North India',
-      Haryana: 'North India',
-      'Uttar Pradesh': 'North India',
-      Uttarakhand: 'North India',
-      'Jammu and Kashmir': 'North India',
-      Punjab: 'North India',
-      Rajasthan: 'North India',
-      Goa: 'West India',
-      Gujarat: 'West India',
-      Maharashtra: 'West India',
-      'Andhra Pradesh': 'South India',
-      'Tamil Nadu': 'South India',
-      Karnataka: 'South India',
-      Telangana: 'South India',
-      Kerala: 'South India',
-      Bihar: 'East India',
-      Jharkhand: 'East India',
-      Orissa: 'East India',
-      'West Bengal': 'East India',
-      Chhattisgarh: 'Central India',
-      'Madhya Pradesh': 'Central India',
-      'Arunachal Pradesh': 'Northeast India',
-      Assam: 'Northeast India',
-      Manipur: 'Northeast India',
-      Meghalaya: 'Northeast India',
-      Mizoram: 'Northeast India',
-      Nagaland: 'Northeast India',
-      Sikkim: 'Northeast India',
-      Tripura: 'Northeast India',
+      BELGIUM: 'EUROPE',
+      CHINA: 'ASIA',
+      ITALY: 'EUROPE',
+      NEWZEALAND: 'OCEANIA',
+      USA: 'NORTH AMERICA',
+      THAILAND: 'ASIA',
+      IRAN: 'ASIA',
+      IRAQ: 'ASIA',
+      NEPAL: 'ASIA',
+      AFGANISTAN: 'ASIA',
+      AUSTRALIA: 'OCEANIA',
+      CHILE: 'SOUTH AMERICA',
+      PERU: 'SOUTH AMERICA',
+      EGYPT: 'AFRICA',
+      'SOUTH AFRICA': ' AFRICA',
+      PAKISTAN: 'ASIA',
+      KABUL: 'ASIA',
     }
 
     //Processing partition_ring_group
@@ -190,6 +170,15 @@ class RadialCustom extends Component {
     this.arc_key = []
     this.ring_key = []
     this.partition_key = []
+
+    this.regionOrder = [
+      'ASIA',
+      'NORTH AMERICA',
+      'EUROPE',
+      'AFRICA',
+      'SOUTH AMERICA',
+      'OCEANIA',
+    ]
 
     // Generating arc,ring,partition key, max_arc
     this.partition_ring_group.forEach(d => {
@@ -214,8 +203,9 @@ class RadialCustom extends Component {
       //FIXME: should this be sortby or uniq ?
       d[this.arc] = _.sortBy(d[this.arc])
 
-      // Sort here Instead by Country/Continent or whatever
-      //   d[this.arc] = _.sortBy(d[this.arc], d => this.stateRegionKeys[d])
+      d[this.arc] = _.sortBy(d[this.arc], d =>
+        this.regionOrder.indexOf(this.stateRegionKeys[d])
+      )
     })
 
     this.arc_key = _.uniqBy(this.arc_key)
@@ -317,6 +307,12 @@ class RadialCustom extends Component {
       })
       this.allCountries_in_year.push(_.uniq(tempArray))
     }
+
+    this.allCountries_in_year.forEach((loclist, i) => {
+      this.allCountries_in_year[i] = _.sortBy(loclist, loc =>
+        this.regionOrder.indexOf(this.stateRegionKeys[loc])
+      )
+    })
 
     console.log(this.allCountries_in_year)
 
@@ -780,7 +776,7 @@ class RadialCustom extends Component {
       .attr('class', 'partition_annotations')
       .attr('dy', d => {
         // Code for adjusting the dy for the reversed arcs (partition 5 & 7)
-        if (d in { 5: 0, 4: 0, 8: 0, 7: 0 }) return this.arc_height + 5
+        if (d in { 5: 0, 4: 0, 8: 0, 7: 0 }) return this.arc_height + 7
         else return -5
       })
       .each((d, i, j) => {
@@ -932,8 +928,8 @@ class RadialCustom extends Component {
                 .select(jx[ix])
                 .transition()
                 .duration(100)
-                .attr('fill-opacity', 0.07)
-                .attr('stroke-opacity', 0.1)
+                .attr('fill-opacity', 0.075)
+                .attr('stroke-opacity', 0.12)
             }
           })
 
@@ -1021,9 +1017,9 @@ class RadialCustom extends Component {
               ')'
             )
           })
-          .attr('x', dx => -dx.length / (2.2 * 2) + 'em')
+          .attr('x', dx => -dx.length / (2 * 2) + 'em')
           .attr('y', -10)
-          .attr('width', dx => dx.length / 2.2 + 'em') //FIXME: set issue:
+          .attr('width', dx => dx.length / 2 + 'em') //FIXME: set issue:
           .attr('height', '0.62em')
           .attr('fill', dx => regionColorScale(this.stateRegionKeys[dx]))
           .attr('fill-opacity', 0.75)
@@ -1036,9 +1032,8 @@ class RadialCustom extends Component {
           .attr('pointer-events', 'none')
           //FIXME: Change the fill scale
           .attr('fill', dx => {
-            if (this.stateRegionKeys[dx] === 'East India') return '#2C8ACC'
-            else if (this.stateRegionKeys[dx] === 'Central India')
-              return '#D41FA9'
+            if (this.stateRegionKeys[dx] === 'OCEANIA') return '#2C8ACC'
+            else if (this.stateRegionKeys[dx] === 'EUROPE') return '#D41FA9'
             else return 'white'
           })
           // .attr('font-weight','bold' )
@@ -1170,26 +1165,9 @@ class RadialCustom extends Component {
         d => 'white' // colorScale(this.arc_key.indexOf(d) / this.arc_key.length)
       )
       .attr('stroke-width', this.arc_height / 25)
-      //FIXME: Tooltip
-      .on('mouseover', (d, i, j) => {
-        d3.event.stopPropagation()
-
-        div
-          .transition()
-          .duration(200)
-          .attr('opacity', 0.9)
-
-        div
-          .html(
-            d +
-              ' ' +
-              j[0].parentNode.__data__[this.ring] +
-              ' ' +
-              this.stateRegionKeys[d]
-          )
-          .attr('left', d3.event.pageX + 'px')
-          .attr('top', d3.event.pageY - 10 + 'px')
-      })
+    // .attr('data-tip', (d, i, j) => {
+    //   return 'kk' //j[0].parentNode.__data__[this.ring] + '<br>' + d
+    // })
   }
 
   dashed_bubble_annotation = d => {
@@ -1270,11 +1248,20 @@ class RadialCustom extends Component {
 
   render() {
     return (
-      <svg
-        width={this.props.width}
-        height={this.props.height}
-        ref={this.props.containerId}
-      />
+      <div>
+        {/* <ReactTooltip
+          place="top"
+          border="false"
+          // html={'True'}
+          effect="solid"
+          type="info"
+        /> */}
+        <svg
+          width={this.props.width}
+          height={this.props.height}
+          ref={this.props.containerId}
+        />
+      </div>
     )
   }
 }

@@ -1,17 +1,16 @@
 import React, { Component } from 'react'
-import mArrivals from '../Data/monthly_arrivals.json'
-import month_food_group from '../Data/month_food_grouping.json'
-import totaldata from '../Data/totaldata.json'
+import totaldata from '../Data/totaldata2.json'
 import RadialCustom from '../components/RadialCustom'
 import RadialImp from '../components/RadialImp'
 import styled from 'react-emotion'
-// import { log } from 'util'
 import Img from 'gatsby-image'
+// import ReactTooltip from 'react-tooltip'
 
 //styling
 const RadialWrapper = styled('div')`
   display: flex;
   justify-content: center;
+  // flex-wrap: wrap;
 `
 
 const RadialWrapperWide = styled('div')`
@@ -21,20 +20,18 @@ const RadialWrapperWide = styled('div')`
 `
 
 const TextWrapper = styled('div')`
-  max-width: 680px;
+  max-width: 690px;
   margin: auto;
+  word-spacing: 0.13rem;
 `
 
 const ImgWrapper = styled('div')`
-  max-width: 910px;
+  max-width: 960px;
   margin: auto;
 `
 
 class IndexPage extends Component {
   dataprep = () => {
-    // console.log(totaldata)
-    // console.log(month_food_group)
-
     this.top10 = totaldata.filter(d => d.vizcode === 'top10')
     this.nexttop10 = totaldata.filter(d => d.vizcode === 'nexttop10')
     this.bottom10 = totaldata.filter(d => d.vizcode === 'bottom10')
@@ -54,12 +51,14 @@ class IndexPage extends Component {
           </p>
           <p>
             In terms of arrival quantity, Azadpur Mandi is the largest F&V
-            market in Asia. The second biggest also happens to be in India:
-            Sopore Mandi of J&K. The Mandi is a vibrant place of bustling
-            activity especially in the wee hours, when the produce arrives in
-            trucks from different parts of the country. Upon arrival, the
-            produce is auctioned for sale by registered agents of the Market.
-            Buyers range from the hospitality industry to the pushcart vendors.
+            market in Asia. Sopore Mandi of J&K is the second largest fruits
+            market in Asia. If you are a resident of Delhi, chances are that any
+            fruit you purchase in Delhi is coming from the Azadpur Mandi. The
+            Mandi is a vibrant place of bustling activity especially in the wee
+            hours, when the produce arrives in trucks from different parts of
+            the country. Upon arrival, the produce is auctioned for sale by
+            registered agents of the Market. Buyers range from the hospitality
+            industry to the pushcart vendors.
           </p>
         </TextWrapper>
         <ImgWrapper>
@@ -76,53 +75,48 @@ class IndexPage extends Component {
             bulletin on it's website which provides information on the arrival
             quantity of various food items each day along with the places from
             which the food item arrived. Here I visualise the data for the F.Y.
-            2016-17 of some food items of interest (mostly fruits).
+            2016-17 of some fruits of interest.
           </p>
           <p>
             To get a sense of the scale of the market and to find out where do
             the fruits you relish come from, explore the visualisation by
-            scolling down.
+            scolling down.{' '}
           </p>
-          <p>
-            Sabjiyan to jaydatar sabhi jageh ho jati hai, that's why fruits are
-            interesting.
-          </p>
+          <ul>
+            <li>
+              It is important to note here that the data does not provide
+              information on how much of a food item arrived from a specific
+              location. It only provides the total arrival quantity of a food
+              item for the day and the list of various places it arrived from.
+            </li>
+          </ul>
+
           <hr />
-          <h2>How to read the visualisation </h2>
-        </TextWrapper>
-        {/* <RadialWrapper>
-          <RadialCustom
-            // Here you can give some logical grouping to arc i.e States to support decoding by reducing colors
-            // Mini India Map on top right to help decode Location
-            //Data
-            mArrivals={mArrivals}
-            partition_ring_group={month_food_group}
-            //Encodings
-            ring="Food"
-            partition="Month"
-            arc="Location"
-            alignment="No"
-            //Design
-            width={790}
-            height={700}
-            bubble_circle_radius={315} //Governs the size of the whole radial proportionally
-            min_radius={135}
-            arc_height={8}
-            bubbleRfactor={110}
-            // extra_partitions={1} //Can't be zero now TODO: Remove from props
-            bg_ring_gap={1}
-            containerId="cmp1"
-          />
-        </RadialWrapper> */}
-        <TextWrapper>
-          <hr />
-          <h2>Top 10 Fruits of the year, by domestic arrivals</h2>
-        </TextWrapper>
-        <RadialWrapperWide>
+          <h2>How to read the visualisation:</h2>
           <div style={{ marginTop: '-1rem' }}>
+            <h4>Follow along the numbers 👉 </h4>
+          </div>
+        </TextWrapper>
+        <ImgWrapper>
+          <Img sizes={this.props.data.howtopartOnee.sizes} />
+        </ImgWrapper>
+        <TextWrapper>
+          <div style={{ marginTop: '2rem' }}>
+            <hr />
+          </div>
+        </TextWrapper>
+        <ImgWrapper>
+          <Img sizes={this.props.data.howtopartTwo.sizes} />
+        </ImgWrapper>
+        <TextWrapper>
+          <div style={{ marginTop: '2rem' }}>
+            <hr />
+          </div>
+          <h3>Top 10 Fruits of the year, by domestic arrivals</h3>
+        </TextWrapper>
+        <RadialWrapper>
+          <div style={{ marginTop: '-1rem', marginLeft: '-2rem' }}>
             <RadialCustom
-              // Here you can give some logical grouping to arc i.e States to support decoding by reducing colors
-              // Mini India Map on top right to help decode Location
               //Data
               partition_ring_group={this.top10}
               //Encodings
@@ -145,32 +139,46 @@ class IndexPage extends Component {
               containerId="top10"
             />
           </div>
+          <div style={{ marginLeft: '2rem', maxWidth: '80' }}>
+            <img src={require('../images/stateRegion.png')} />
+          </div>
+        </RadialWrapper>
 
-          <div style={{ maxWidth: 400, marginTop: '2rem', fontSize: 16 }}>
-            <h4>Facts you might not know</h4>
-            <p>
-              - Apple trumps all F&V by being the largest arrival of the year in
+        <TextWrapper>
+          <h4>Did you know?</h4>
+          <ul>
+            <li>
+              Apple trumps all F&V by being the largest arrival of the year in
               both domestic and international arrivals. A massive 4.7 lakh
               tonnes of Apples came to the Mandi in domestic arrivals in the
               year 2016-17, which is 1 lakh tonnes more than Potato, the second
               heighest domestic arrival in combined F&V category, and 3 lakh
               tonnes more than Mango, the second heighest domestic arrival in
-              Fruits category. All of apple comes from North India except for
-              two months where it also arives from MP(Central India).
-              <br />
-              How many % of fruits come from specific region
-              <br />
-              Mango is by far the most grographically diverse fruit in domestic
-              arrivals.
-              <br />
-              Most and least diverse food crops in terms of arrivals
-              <br /> A typical day example
-              <br /> Railway - Dropping the idea
-            </p>
-          </div>
-        </RadialWrapperWide>
-        <RadialWrapperWide>
-          <div style={{ marginTop: '-1rem' }}>
+              Fruits category.
+            </li>
+            <li>
+              6,783 Tonnes of Apple arrived on 26th September 2016. This the
+              highest arrival quantity of any food on any given day during
+              studied year.
+            </li>
+            <li>
+              Mango is by far the most grographically diverse fruit from the
+              perspective of domestic arrivals. It arrives from 9 different
+              states in the whole year. The other 'geographically diverse'
+              foods, in the above context, are Sarda Melon with 8 states &
+              Banana,Guava,Water Melon with 7 states.
+            </li>
+            {/* <li>Variety</li> */}
+          </ul>
+          <hr />
+
+          <h3>
+            The next 10 fruits ranked by domestic arrival quantity for the year
+          </h3>
+        </TextWrapper>
+
+        <RadialWrapper>
+          <div style={{ marginTop: '-4rem', marginLeft: '-5rem' }}>
             <RadialCustom
               // Here you can give some logical grouping to arc i.e States to support decoding by reducing colors
               // Mini India Map on top right to help decode Location
@@ -196,58 +204,59 @@ class IndexPage extends Component {
               containerId="nexttop10"
             />
           </div>
+        </RadialWrapper>
 
-          <div style={{ maxWidth: 400, marginTop: '2rem', fontSize: 16 }}>
-            <h4>Facts you might not know</h4>
-            <p>
-              - Apple trumps all F&V by being the largest arrival of the year in
-              both domestic and international arrivals. A massive 4.7 lakh
-              tonnes of Apples came to the Mandi in domestic arrivals in the
-              year 2016-17, which is 1 lakh tonnes more than Potato, the second
-              heighest domestic arrival in combined F&V category, and 3 lakh
-              tonnes more than Mango, the second heighest domestic arrival in
-              Fruits category. All of apple comes from North India except for
-              two months where it also arives from MP(Central India).
-              <br />
-              How many % of fruits come from specific region
-              <br />
-              Mango is by far the most grographically diverse fruit in domestic
-              arrivals.
-              <br />
-              Most and least diverse food crops in terms of arrivals
-              <br /> A typical day example
-              <br /> Railway - Dropping the idea
-            </p>
+        <TextWrapper>
+          <h4>Did you find out ?</h4>
+          <p>
+            As we moved from the top ten to the next ten (abovementioned
+            fruits), the set of ten is predominantly sourced from{' '}
+            <span style={{ backgroundColor: '#2C8ACC', color: 'white' }}>
+              North India
+            </span>{' '}
+            as is clearly visible from the colors.{' '}
+            <span style={{ backgroundColor: '#FF782E', color: 'white' }}>
+              West India
+            </span>{' '}
+            stands a close second. This trend will be even more prominent when
+            we look at the 10 bottom most fruits by domestic arrival.
+          </p>
+          <hr />
+          <h3>The 10 bottommost fruits by Domestic arrivals </h3>
+        </TextWrapper>
+        <RadialWrapper>
+          <div style={{ marginTop: '-2rem', marginLeft: '-5rem' }}>
+            <RadialCustom
+              // Here you can give some logical grouping to arc i.e States to support decoding by reducing colors
+              // Mini India Map on top right to help decode Location
+              //Data
+              partition_ring_group={this.bottom10}
+              //Encodings
+              ring="Food"
+              partition="Month"
+              arc="Locationlist"
+              alignment="No"
+              //Design
+              width={690}
+              height={670}
+              bubble_circle_radius={290} //Governs the size of the whole radial proportionally
+              min_radius={120}
+              arc_height={7}
+              bubbleRfactor={0.5}
+              // extra_partitions={1} //Can't be zero now TODO: Remove from props
+              bg_ring_gap={0.7}
+              bubbleArcGap={70}
+              lift={59}
+              pull={-10}
+              containerId="bottom10"
+            />
           </div>
-        </RadialWrapperWide>
-        <RadialWrapperWide>
-          <RadialCustom
-            // Here you can give some logical grouping to arc i.e States to support decoding by reducing colors
-            // Mini India Map on top right to help decode Location
-            //Data
-            partition_ring_group={this.bottom10}
-            //Encodings
-            ring="Food"
-            partition="Month"
-            arc="Locationlist"
-            alignment="No"
-            //Design
-            width={690}
-            height={670}
-            bubble_circle_radius={290} //Governs the size of the whole radial proportionally
-            min_radius={120}
-            arc_height={7}
-            bubbleRfactor={0.5}
-            // extra_partitions={1} //Can't be zero now TODO: Remove from props
-            bg_ring_gap={0.7}
-            bubbleArcGap={70}
-            lift={59}
-            pull={-10}
-            containerId="bottom10"
-          />
-        </RadialWrapperWide>
-        <RadialWrapperWide>
-          <div style={{ marginTop: '-1rem' }}>
+        </RadialWrapper>
+        <TextWrapper>
+          <h3>Top 10 internationally imported foods in the Mandi</h3>
+        </TextWrapper>
+        <RadialWrapper>
+          <div style={{ marginTop: '-3rem', marginLeft: '-2rem' }}>
             <RadialImp
               // Here you can give some logical grouping to arc i.e States to support decoding by reducing colors
               // Mini India Map on top right to help decode Location
@@ -273,13 +282,30 @@ class IndexPage extends Component {
               containerId="imptop10"
             />
           </div>
-        </RadialWrapperWide>
-
-        <h2> Other interesting imported items </h2>
-        <p>
-          Purple Mangosteen - Link
-          <br /> Rambutan - link
-        </p>
+          <div style={{ marginLeft: '2rem', maxWidth: '80' }}>
+            <img src={require('../images/continents.png')} />
+          </div>
+        </RadialWrapper>
+        <TextWrapper>
+          <h4> Pay close attention, </h4>
+          <p style={{ marginTop: '-1rem' }}>
+            to the pattern of arrivals for Apples in imported category and then
+            go back and match it with the arrival pattern for Apples in domestic
+            category. What did you find out?{' '}
+          </p>
+          <hr />
+          {/* <h2> Other interesting imported items </h2>
+          <p>
+            Purple Mangosteen - Link
+            <br /> Rambutan - link
+          </p> */}
+          <h4 style={{ wordSpacing: '0.4rem' }}>
+            This Project was made using Selenium Webriver-Python for web
+            scraping the data, Openrefine and R for data cleaning, R for data
+            wrangling and analysis, D3.Js & React.Js for web development and
+            Gravit Designer for Illustrations.
+          </h4>
+        </TextWrapper>
       </div>
     )
   }
@@ -291,6 +317,27 @@ export const pageQuery = graphql`
   query IndexQuery {
     imageOne: imageSharp(id: { regex: "/azp img1.jpg/" }) {
       sizes(maxWidth: 960) {
+        ...GatsbyImageSharpSizes
+      }
+    }
+    howtopartOnee: imageSharp(id: { regex: "/howtopart1.png/" }) {
+      sizes(maxWidth: 960) {
+        ...GatsbyImageSharpSizes
+      }
+    }
+
+    howtopartTwo: imageSharp(id: { regex: "/howtopartTwo.png/" }) {
+      sizes(maxWidth: 960) {
+        ...GatsbyImageSharpSizes
+      }
+    }
+    stateRegion: imageSharp(id: { regex: "/stateRegion.png/" }) {
+      sizes(maxWidth: 150) {
+        ...GatsbyImageSharpSizes
+      }
+    }
+    headerImage: imageSharp(id: { regex: "/azp img3.jpg/" }) {
+      sizes(maxWidth: 1200) {
         ...GatsbyImageSharpSizes
       }
     }
